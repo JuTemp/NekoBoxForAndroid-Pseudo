@@ -22,7 +22,7 @@ fun AbstractBean.toUniversalLink(): String {
     var link = "sn://"
     link += TypeMap.reversed[ProxyEntity().putBean(this).type]
     link += "?"
-    link += Util.b64EncodeUrlSafe(Util.zlibCompress(KryoConverters.serialize(this), 9))
+    link += Util.b64EncodeUrlSafe(Util.zlibCompress(KryoConverters.serialize(this), 9)) // zlib压缩在这里 他用的9
     return link
 }
 
