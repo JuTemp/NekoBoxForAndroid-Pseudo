@@ -37,10 +37,13 @@ public class KryoConverters {
 
     @TypeConverter
     public static byte[] serialize(Serializable bean) {
+        // 没找到谁调用这个方法的 那只能我传json进来 我把他public属性拿进来 自己新建一个bean 然后调用这个方法了
+        // http://localhost:8080/socksSerialize POST body: {key: value}
         if (bean == null) return NULL;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ByteBufferOutput buffer = KryosKt.byteBuffer(out);
         bean.serializeToBuffer(buffer);
+        // hook这个buffer 返回给客户端
         buffer.flush();
         buffer.close();
         return out.toByteArray();
@@ -52,6 +55,7 @@ public class KryoConverters {
         ByteBufferInput buffer = KryosKt.byteBuffer(input);
         try {
             bean.deserializeFromBuffer(buffer);
+            // hook这个bean 把他所有public属性都拿出来 返回给客户端
         } catch (KryoException e) {
             Logs.INSTANCE.w(e);
         }
@@ -59,6 +63,7 @@ public class KryoConverters {
         return bean;
     }
 
+    // 把下面这些方法都暴露出来吧 比如http://localhost:8080/socksDeserialize?data=xxx 传base64 buffer进来 类型转换一下就是byte[] 
     @TypeConverter
     public static SOCKSBean socksDeserialize(byte[] bytes) {
         if (JavaUtil.isEmpty(bytes)) return null;
