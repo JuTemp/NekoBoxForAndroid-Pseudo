@@ -18,6 +18,7 @@ fun parseUniversal(link: String): AbstractBean {
     }
 }
 
+// 我想直接把bean需要的东西传进来 然后调用这个方法 拿到string 返回给我
 fun AbstractBean.toUniversalLink(): String {
     var link = "sn://"
     link += TypeMap.reversed[ProxyEntity().putBean(this).type]
